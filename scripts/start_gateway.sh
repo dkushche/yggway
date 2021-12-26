@@ -1,6 +1,9 @@
 #!/bin/bash
 
 docker build --tag yggdrasil_gateway_image .
+
+./scripts/stop_gateway.sh
+
 docker run --name yggdrasil_gateway_container \
            --network="host" \
            --cap-add=NET_ADMIN \
