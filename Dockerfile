@@ -21,9 +21,9 @@ RUN set -ex \
 COPY --from=builder /src/yggdrasil    /usr/bin/
 COPY --from=builder /src/yggdrasilctl /usr/bin/
 COPY --from=builder /tmp/dumb-init    /usr/bin/
-COPY                start.sh          /usr/bin/
+COPY                entrypoint.sh     /usr/bin/
 COPY                configurator.py   .
 
 VOLUME [ "/config" ]
 
-ENTRYPOINT /usr/bin/start.sh
+ENTRYPOINT /usr/bin/entrypoint.sh
