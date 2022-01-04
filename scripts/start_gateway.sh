@@ -10,3 +10,8 @@ docker run --name yggdrasil_gateway_container \
            --device=/dev/net/tun:/dev/net/tun \
            --volume $PWD/yggdrasil_config:/config \
            --detach --rm --interactive --tty yggdrasil_gateway_image
+
+docker run --name alfis \
+           --publish 53:53/tcp \
+           --publish 53:53/udp \
+           --detach --rm cofob/alfis
