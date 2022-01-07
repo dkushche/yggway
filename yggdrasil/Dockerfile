@@ -16,7 +16,7 @@ RUN set -ex \
 FROM alpine:3.10
 
 RUN set -ex \
-    && apk --no-cache add bash python3 iptables bind-tools
+    && apk --no-cache add bash python3
 
 COPY --from=builder /src/yggdrasil    /usr/bin/
 COPY --from=builder /src/yggdrasilctl /usr/bin/

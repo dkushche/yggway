@@ -14,7 +14,7 @@ With this repo, you could fast set up a gateway to the Yggdrasil network. In `co
 
 ```
   yggdrasil_gateway:
-    build: .
+    build: yggdrasil
     network_mode: host
     cap_add:
       - NET_ADMIN
@@ -22,9 +22,7 @@ With this repo, you could fast set up a gateway to the Yggdrasil network. In `co
       - /dev/net/tun
     volumes:
       - './yggdrasil_config:/config'
-  alfis_dns:
-    image: "cofob/alfis"
-    port:
-      - 53:53/tcp
-      - 53:53/udp
+  alfis_resolver:
+    build: alfis
+    network_mode: host
 ```
