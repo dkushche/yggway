@@ -12,6 +12,5 @@ docker run --name yggdrasil_gateway_container \
            --detach --rm --interactive --tty yggdrasil_gateway_image
 
 docker run --name alfis \
-           --publish 53:53/tcp \
-           --publish 53:53/udp \
+           --network="host" \
            --detach --rm cofob/alfis
