@@ -1,6 +1,6 @@
 import json
 
-CONFIG_PATH = "/config/yggdrasil.conf"
+CONFIG_PATH = "/yggdrasil/yggdrasil.conf"
 
 ukranian_peers = [
     "tcp://193.111.114.28:8080",

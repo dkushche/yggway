@@ -21,8 +21,10 @@ With this repo, you could fast set up a gateway to the Yggdrasil network. In `co
     devices:
       - /dev/net/tun
     volumes:
-      - './yggdrasil_config:/config'
+      - './yggdrasil:/yggdrasil'
   alfis_resolver:
     build: alfis
     network_mode: host
+    volumes:
+      - './alfis:/alfis'
 ```
