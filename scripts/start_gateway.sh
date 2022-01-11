@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 docker build --tag yggdrasil_gateway_image yggdrasil
 docker build --tag alfis_resolver_image alfis
 
