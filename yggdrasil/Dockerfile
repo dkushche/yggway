@@ -22,6 +22,4 @@ COPY --from=builder /src/yggdrasil    /usr/bin/
 COPY --from=builder /src/yggdrasilctl /usr/bin/
 COPY --from=builder /tmp/dumb-init    /usr/bin/
 
-VOLUME [ "/yggdrasil" ]
-
 ENTRYPOINT /yggdrasil/entrypoint.sh
