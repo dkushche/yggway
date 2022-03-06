@@ -1,7 +1,0 @@
-*
-
-!.gitignore
-!.dockerignore
-
-!entrypoint.sh
-!Dockerfile
