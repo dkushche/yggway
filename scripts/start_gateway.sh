@@ -14,9 +14,13 @@ docker run --name yggdrasil_gateway_container \
            --volume $PWD/storage:/mnt/storage \
            --detach --rm --interactive --tty yggdrasil_gateway_image
 
-resolv_conf=`cat /etc/resolv.conf`
-echo -e "# Alfis DNS resolver\nnameserver 127.0.0.1\n$resolv_conf" \
-        | sudo tee /etc/resolv.conf
+connection_name=`nmcli con show --active | grep -v NAME | head -n1 | awk '{print $1}'`
+
+nmcli con mod $connection_name ipv4.ignore-auto-dns yes
+nmcli con mod $connection_name ipv4.dns "127.0.0.1"
+
+nmcli con down $connection_name
+nmcli con up $connection_name
 
 docker run --name alfis_resolver_container \
            --network="host" \
