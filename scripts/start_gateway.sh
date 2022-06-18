@@ -8,11 +8,12 @@ docker build --tag alfis_resolver_image alfis
 mkdir -p storage
 
 docker run --name yggdrasil_gateway_container \
+           --restart=always \
            --network="host" \
            --cap-add=NET_ADMIN \
            --device=/dev/net/tun:/dev/net/tun \
            --volume $PWD/storage:/mnt/storage \
-           --detach --rm --interactive --tty yggdrasil_gateway_image
+           --detach --interactive --tty yggdrasil_gateway_image
 
 connection_name=`nmcli con show --active | grep -v NAME | head -n1 | awk '{print $1}'`
 
@@ -23,6 +24,7 @@ nmcli con down $connection_name
 nmcli con up $connection_name
 
 docker run --name alfis_resolver_container \
+           --restart=always \
            --network="host" \
            --volume $PWD/storage:/mnt/storage \
-           --detach --rm --interactive --tty alfis_resolver_image
+           --detach --interactive --tty alfis_resolver_image
