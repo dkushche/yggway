@@ -15,16 +15,20 @@ docker run --name yggdrasil_gateway_container \
            --volume $PWD/storage:/mnt/storage \
            --detach --interactive --tty yggdrasil_gateway_image
 
-connection_name=`nmcli con show --active | grep -v NAME | head -n1 | awk '{print $1}'`
-
-nmcli con mod $connection_name ipv4.ignore-auto-dns yes
-nmcli con mod $connection_name ipv4.dns "127.0.0.1"
-
-nmcli con down $connection_name
-nmcli con up $connection_name
-
 docker run --name alfis_resolver_container \
            --restart=always \
            --network="host" \
            --volume $PWD/storage:/mnt/storage \
            --detach --interactive --tty alfis_resolver_image
+
+sudo apt-get update
+sudo apt-get install -y resolvconf
+
+sudo systemctl start resolvconf.service
+sudo systemctl enable resolvconf.service
+
+sudo mkdir -p /etc/resolvconf/resolv.conf.d
+echo -e "nameserver 127.0.0.1" | sudo tee /etc/resolvconf/resolv.conf.d/head
+
+sudo systemctl restart resolvconf.service
+sudo systemctl restart systemd-resolved.service
