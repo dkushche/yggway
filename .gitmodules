@@ -1,6 +1,6 @@
 [submodule "alfis"]
 	path = alfis
-	url = git@github.com:dkushche/alfis_service.git
+	url = https://github.com/dkushche/alfis_service.git
 [submodule "yggdrasil"]
 	path = yggdrasil
-	url = git@github.com:dkushche/yggdrasil_service.git
+	url = https://github.com/dkushche/yggdrasil_service.git
