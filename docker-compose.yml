@@ -1,5 +1,6 @@
 version: "3.9"
 services:
+
   yggdrasil:
     build: yggdrasil
     image: yggdrasil_gateway_image
@@ -9,6 +10,7 @@ services:
       - NET_ADMIN
       - DAC_OVERRIDE
     sysctls:
+      - net.ipv6.conf.all.forwarding=1
       - net.ipv6.conf.all.disable_ipv6=0
     devices:
       - "/dev/net/tun:/dev/net/tun"
@@ -17,8 +19,9 @@ services:
         source: ./storage
         target: /mnt/storage
     networks:
-      clear:
+      ygggateway:
         ipv4_address: 10.5.0.2
+        ipv6_address: 2001:3200:3200::2
 
   alfis:
     build: alfis
@@ -30,8 +33,9 @@ services:
         source: ./storage
         target: /mnt/storage
     networks:
-      clear:
+      ygggateway:
         ipv4_address: 10.5.0.3
+        ipv6_address: 2001:3200:3200::3
 
   firefox:
     image: jlesage/firefox:v1.18.0
@@ -42,6 +46,8 @@ services:
       - DISPLAY_HEIGHT=${DISPLAY_HEIGHT}
     ports:
       - "5800:5800"
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
     volumes:
       - type: bind
         source: ./storage/firefox
@@ -50,15 +56,20 @@ services:
         source: ./config/resolv.conf
         target: /etc/resolv.conf
     networks:
-      clear:
+      ygggateway:
         ipv4_address: 10.5.0.4
+        ipv6_address: 2001:3200:3200::4
 
 networks:
-  clear:
+  ygggateway:
+    enable_ipv6: true
     driver: bridge
     ipam:
+      driver: default
       config:
         - subnet: 10.5.0.0/16
           gateway: 10.5.0.1
+        - subnet: 2001:3200:3200::/64
+          gateway: 2001:3200:3200::1
     driver_opts:
-      com.docker.network.bridge.name: yggclear
+      com.docker.network.bridge.name: ygggateway

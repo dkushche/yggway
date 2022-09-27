@@ -15,3 +15,11 @@ mkdir -p storage/firefox
 cp config/alfis.toml storage
 
 docker-compose up --detach
+
+# /etc/docker/daemon.json
+# {
+#     "ipv6": true,
+#     "fixed-cidr-v6": "2001:db8:1::/64"
+# }
+#
+# sudo systemctl restart docker
