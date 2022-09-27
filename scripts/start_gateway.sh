@@ -12,5 +12,6 @@ docker-compose config 1> /dev/null
 ./scripts/stop_gateway.sh
 
 mkdir -p storage/firefox
+cp config/alfis.toml storage
 
 docker-compose up --detach
