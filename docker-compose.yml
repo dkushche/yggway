@@ -16,6 +16,9 @@ services:
       - type: bind
         source: ./storage
         target: /mnt/storage
+    networks:
+      clear:
+        ipv4_address: 10.5.0.2
 
   alfis:
     build: alfis
@@ -26,6 +29,9 @@ services:
       - type: bind
         source: ./storage
         target: /mnt/storage
+    networks:
+      clear:
+        ipv4_address: 10.5.0.3
 
   firefox:
     image: jlesage/firefox:v1.18.0
@@ -40,3 +46,19 @@ services:
       - type: bind
         source: ./storage/firefox
         target: /config
+      - type: bind
+        source: ./config/resolv.conf
+        target: /etc/resolv.conf
+    networks:
+      clear:
+        ipv4_address: 10.5.0.4
+
+networks:
+  clear:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+    driver_opts:
+      com.docker.network.bridge.name: yggclear
