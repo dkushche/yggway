@@ -2,7 +2,7 @@ version: "3.9"
 services:
 
   yggdrasil:
-    build: yggdrasil
+    build: deps/yggdrasil
     image: yggdrasil_gateway_image
     container_name: yggdrasil_gateway_container
     restart: always
@@ -19,12 +19,12 @@ services:
         source: ./storage
         target: /mnt/storage
     networks:
-      ygggateway:
+      yggway:
         ipv4_address: 10.5.0.2
         ipv6_address: 2001:3200:3200::2
 
   alfis:
-    build: alfis
+    build: deps/alfis
     image: alfis_resolver_image
     container_name: alfis_resolver_container
     restart: always
@@ -33,7 +33,7 @@ services:
         source: ./storage
         target: /mnt/storage
     networks:
-      ygggateway:
+      yggway:
         ipv4_address: 10.5.0.3
         ipv6_address: 2001:3200:3200::3
 
@@ -56,12 +56,12 @@ services:
         source: ./config/resolv.conf
         target: /etc/resolv.conf
     networks:
-      ygggateway:
+      yggway:
         ipv4_address: 10.5.0.4
         ipv6_address: 2001:3200:3200::4
 
 networks:
-  ygggateway:
+  yggway:
     enable_ipv6: true
     driver: bridge
     ipam:
@@ -72,4 +72,4 @@ networks:
         - subnet: 2001:3200:3200::/64
           gateway: 2001:3200:3200::1
     driver_opts:
-      com.docker.network.bridge.name: ygggateway
+      com.docker.network.bridge.name: yggway

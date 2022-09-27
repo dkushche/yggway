@@ -1,0 +1,130 @@
+#!/bin/python
+
+import os
+import re
+import json
+import shutil
+import argparse
+import subprocess
+
+
+def check_submodules():
+    submodules_status = subprocess.run(
+        ["git", "submodule", "status"], stdout=subprocess.PIPE, check=True,
+    )
+
+    if any(clean_submodule in submodules_status.stdout
+           for clean_submodule in [b"alfis\n", b"yggdrasil\n"]):
+
+        subprocess.run(["git", "submodule", "init"], check=True)
+        subprocess.run(["git", "submodule", "update"], check=True)
+
+    print(" * Submodules prepared")
+
+
+def check_docker_config():
+    try:
+        with open("/etc/docker/daemon.json", 'r', encoding="utf-8") as daemon_conf:
+            config = json.load(daemon_conf)
+
+            if not config.get("ipv6"):
+                print(" - Docker config error: ipv6 is not supported")
+                return (False, config)
+
+            if config.get("fixed-cidr-v6") != "2001:db8:1::/64":
+                print(" - Docker config error: fixed-cidr-v6 is incorrect")
+                return (False, config)
+
+            return (True, config)
+    except json.decoder.JSONDecodeError as err:
+        print(f" - Decode Docker config error: {err}")
+    except FileNotFoundError as err:
+        print(f" - Docker config error: {err}")
+
+    return (False, {})
+
+
+def up():
+    check_submodules()
+
+    xdpy_info = subprocess.run(
+        ["xdpyinfo"], stdout=subprocess.PIPE, check=True, text=True
+    )
+    resolution = re.search(r"dimensions:    ([0-9]+)x([0-9]+) pixels", xdpy_info.stdout)
+    (os.environ["DISPLAY_WIDTH"], os.environ["DISPLAY_HEIGHT"]) = resolution.groups()
+
+    subprocess.run(["docker-compose", "config"], stdout=subprocess.DEVNULL)
+
+    down()
+
+    os.makedirs("storage/firefox", exist_ok=True)
+    shutil.copy("config/alfis.toml", "storage")
+
+    (status, config) = check_docker_config()
+    if not status:
+        if os.getuid() != 0:
+            print(" - Docker config is not ok, please run as superuser")
+            exit(1)
+        else:
+            with open("/etc/docker/daemon.json", 'w', encoding="utf-8") as daemon_conf:
+                config["ipv6"] = True
+                config["fixed-cidr-v6"] = "2001:db8:1::/64"
+
+                json.dump(config, daemon_conf, indent=4)
+                subprocess.run(["systemctl", "reload", "docker"], check=True)
+            print(" * Docker config fixed")
+
+    print(" * Docker config rechecked")
+
+    subprocess.run(["docker-compose", "up", "--detach"], check=True)
+
+
+def down():
+    subprocess.run(["docker-compose", "stop"], check=True)
+
+
+def purge():
+    subprocess.run(
+        ["docker-compose", "down","-v", "--rmi", "all", "--remove-orphans"],
+        check=True
+    )
+    shutil.rmtree("storage")
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '-u', '--up', action='store_true',
+        help='Starts yggdrasil gateway. You could access to browser through localhost:5800'
+    )
+
+    parser.add_argument(
+        '-d', '--down', action='store_true',
+        help='Stops gateway without removing container and configurations'
+    )
+
+    parser.add_argument(
+        '-p', '--purge', action='store_true',
+        help='Full cleanup of environment'
+    )
+
+    args = vars(parser.parse_args())
+
+    if not any(args.values()):
+        parser.print_help()
+        exit(1)
+
+    return args
+
+
+def main():
+    args = parse_args()
+
+    for cmd, status in args.items():
+        if status is True:
+            globals()[cmd]()
+
+
+if __name__ == "__main__":
+    main()
