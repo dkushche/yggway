@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import json
 import shutil
 import argparse
@@ -44,7 +45,7 @@ def check_docker_config():
     return (False, {})
 
 
-def up():
+def start():
     check_submodules()
 
     xdpy_info = subprocess.run(
@@ -53,9 +54,9 @@ def up():
     resolution = re.search(r"dimensions:    ([0-9]+)x([0-9]+) pixels", xdpy_info.stdout)
     (os.environ["DISPLAY_WIDTH"], os.environ["DISPLAY_HEIGHT"]) = resolution.groups()
 
-    subprocess.run(["docker-compose", "config"], stdout=subprocess.DEVNULL)
+    subprocess.run(["docker-compose", "config"], stdout=subprocess.DEVNULL, check=True)
 
-    down()
+    stop()
 
     os.makedirs("storage/firefox", exist_ok=True)
     shutil.copy("config/alfis.toml", "storage")
@@ -64,7 +65,7 @@ def up():
     if not status:
         if os.getuid() != 0:
             print(" - Docker config is not ok, please run as superuser")
-            exit(1)
+            sys.exit(1)
         else:
             with open("/etc/docker/daemon.json", 'w', encoding="utf-8") as daemon_conf:
                 config["ipv6"] = True
@@ -79,7 +80,7 @@ def up():
     subprocess.run(["docker-compose", "up", "--detach"], check=True)
 
 
-def down():
+def stop():
     subprocess.run(["docker-compose", "stop"], check=True)
 
 
@@ -95,12 +96,12 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '-u', '--up', action='store_true',
+        '-u', '--start', action='store_true',
         help='Starts yggdrasil gateway. You could access to browser through localhost:5800'
     )
 
     parser.add_argument(
-        '-d', '--down', action='store_true',
+        '-d', '--stop', action='store_true',
         help='Stops gateway without removing container and configurations'
     )
 
@@ -113,7 +114,7 @@ def parse_args():
 
     if not any(args.values()):
         parser.print_help()
-        exit(1)
+        sys.exit(1)
 
     return args
 
