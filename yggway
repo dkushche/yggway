@@ -118,6 +118,22 @@ def purge():
     shutil.rmtree("storage", ignore_errors=True)
 
 
+def test():
+    """
+    Runs test container for manual debugging
+    """
+
+    start()
+
+    subprocess.run([
+            "docker", "run", "-it",
+            "--net", "container:firefox_interface",
+            "nicolaka/netshoot"
+        ],
+        check=True
+    )
+
+
 def parse_args():
     """
     Parses of command line arguments
@@ -138,6 +154,11 @@ def parse_args():
     parser.add_argument(
         '-p', '--purge', action='store_true',
         help='Full cleanup of environment'
+    )
+
+    parser.add_argument(
+        '-t', '--test', action='store_true',
+        help='Run yggway in test mode'
     )
 
     args = vars(parser.parse_args())
