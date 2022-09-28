@@ -19,8 +19,7 @@ services:
         source: ./storage/yggdrasil
         target: /mnt/storage
     networks:
-      yggway:
-        ipv4_address: 10.5.0.2
+      yggway_ipv6:
         ipv6_address: 2001:3200:3200::2
 
   alfis:
@@ -33,9 +32,8 @@ services:
         source: ./storage/alfis
         target: /mnt/storage
     networks:
-      yggway:
+      yggway_ipv4:
         ipv4_address: 10.5.0.3
-        ipv6_address: 2001:3200:3200::3
 
   firefox:
     image: jlesage/firefox:v1.18.0
@@ -56,20 +54,29 @@ services:
         source: ./config/resolv.conf
         target: /etc/resolv.conf
     networks:
-      yggway:
-        ipv4_address: 10.5.0.4
+      yggway_ipv6:
         ipv6_address: 2001:3200:3200::4
+      yggway_ipv4:
+        ipv4_address: 10.5.0.4
 
 networks:
-  yggway:
-    enable_ipv6: true
+  yggway_ipv4:
     driver: bridge
     ipam:
       driver: default
       config:
         - subnet: 10.5.0.0/16
           gateway: 10.5.0.1
+    driver_opts:
+      com.docker.network.bridge.name: yggway_ipv4
+
+  yggway_ipv6:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
         - subnet: 2001:3200:3200::/64
           gateway: 2001:3200:3200::1
     driver_opts:
-      com.docker.network.bridge.name: yggway
+      com.docker.network.bridge.name: yggway_ipv6

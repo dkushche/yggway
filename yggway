@@ -78,6 +78,7 @@ def start():
         os.makedirs(f"storage/{service}", exist_ok=True)
 
     shutil.copy("config/alfis.toml", "storage/alfis")
+    shutil.copy("config/blockchain.db", "storage/alfis")
 
     (status, config) = check_docker_config()
     if not status:
@@ -130,7 +131,7 @@ def test():
             "--net", "container:firefox_interface",
             "nicolaka/netshoot"
         ],
-        check=True
+        check=False
     )
 
 
