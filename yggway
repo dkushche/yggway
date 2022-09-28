@@ -1,4 +1,9 @@
 #!/bin/python
+"""
+Utility for managing containers system
+that gives access to yggdrasil network and alfis dns
+via firefox browser in your host browser
+"""
 
 import os
 import re
@@ -10,6 +15,11 @@ import subprocess
 
 
 def check_submodules():
+    """
+    Checks alfis and yggdrasil git submodules and
+    init, update them in other cases
+    """
+
     submodules_status = subprocess.run(
         ["git", "submodule", "status"], stdout=subprocess.PIPE, check=True,
     )
@@ -24,6 +34,10 @@ def check_submodules():
 
 
 def check_docker_config():
+    """
+    Checks do docker config contains mandatory values set and correct
+    """
+
     try:
         with open("/etc/docker/daemon.json", 'r', encoding="utf-8") as daemon_conf:
             config = json.load(daemon_conf)
@@ -46,11 +60,13 @@ def check_docker_config():
 
 
 def start():
+    """
+    Initializes yggway subsystems and starts system
+    """
+
     check_submodules()
 
-    xdpy_info = subprocess.run(
-        ["xdpyinfo"], stdout=subprocess.PIPE, check=True, text=True
-    )
+    xdpy_info = subprocess.run(["xdpyinfo"], stdout=subprocess.PIPE, check=True, text=True)
     resolution = re.search(r"dimensions:    ([0-9]+)x([0-9]+) pixels", xdpy_info.stdout)
     (os.environ["DISPLAY_WIDTH"], os.environ["DISPLAY_HEIGHT"]) = resolution.groups()
 
@@ -81,10 +97,18 @@ def start():
 
 
 def stop():
+    """
+    Stops system
+    """
+
     subprocess.run(["docker-compose", "stop"], check=True)
 
 
 def purge():
+    """
+    Clears all resources
+    """
+
     subprocess.run(
         ["docker-compose", "down","-v", "--rmi", "all", "--remove-orphans"],
         check=True
@@ -93,6 +117,10 @@ def purge():
 
 
 def parse_args():
+    """
+    Parses of command line arguments
+    """
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -120,6 +148,10 @@ def parse_args():
 
 
 def main():
+    """
+    Checks arguments and runs mentioned commands
+    """
+
     args = parse_args()
 
     for cmd, status in args.items():
