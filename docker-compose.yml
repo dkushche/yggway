@@ -16,7 +16,7 @@ services:
       - "/dev/net/tun:/dev/net/tun"
     volumes:
       - type: bind
-        source: ./storage
+        source: ./storage/yggdrasil
         target: /mnt/storage
     networks:
       yggway:
@@ -30,7 +30,7 @@ services:
     restart: always
     volumes:
       - type: bind
-        source: ./storage
+        source: ./storage/alfis
         target: /mnt/storage
     networks:
       yggway:

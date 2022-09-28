@@ -74,8 +74,10 @@ def start():
 
     stop()
 
-    os.makedirs("storage/firefox", exist_ok=True)
-    shutil.copy("config/alfis.toml", "storage")
+    for service in ["firefox", "alfis", "yggdrasil"]:
+        os.makedirs(f"storage/{service}", exist_ok=True)
+
+    shutil.copy("config/alfis.toml", "storage/alfis")
 
     (status, config) = check_docker_config()
     if not status:
@@ -113,7 +115,7 @@ def purge():
         ["docker-compose", "down","-v", "--rmi", "all", "--remove-orphans"],
         check=True
     )
-    shutil.rmtree("storage")
+    shutil.rmtree("storage", ignore_errors=True)
 
 
 def parse_args():
