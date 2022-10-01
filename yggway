@@ -101,22 +101,22 @@ def parse_args():
 
     parser.add_argument(
         '-u', '--start', action='store_true',
-        help='Starts yggdrasil gateway. You could access to browser through localhost:5800'
+        help='starts yggdrasil gateway; (you could access to browser through localhost:5800)'
     )
 
     parser.add_argument(
         '-d', '--stop', action='store_true',
-        help='Stops gateway without removing container and configurations'
+        help='stops gateway without removing container and configurations'
     )
 
     parser.add_argument(
         '-p', '--purge', action='store_true',
-        help='Full cleanup of environment'
+        help='full cleanup of environment'
     )
 
     parser.add_argument(
         '-t', '--test', action='store_true',
-        help='Run yggway in test mode'
+        help='run yggway in test mode'
     )
 
     args = vars(parser.parse_args())
