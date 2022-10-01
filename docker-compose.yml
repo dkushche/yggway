@@ -2,8 +2,7 @@ version: "3.9"
 services:
 
   yggdrasil:
-    build: deps/yggdrasil
-    image: yggdrasil_gateway_image
+    image: ghcr.io/dkushche/yggdrasil_service:master
     container_name: yggdrasil_gateway_container
     restart: always
     cap_add:
@@ -24,8 +23,7 @@ services:
       - "5800:5800"
 
   alfis:
-    build: deps/alfis
-    image: alfis_resolver_image
+    image: ghcr.io/dkushche/alfis_service:master
     container_name: alfis_resolver_container
     restart: always
     volumes:
