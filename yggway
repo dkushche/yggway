@@ -13,31 +13,10 @@ import argparse
 import subprocess
 
 
-def check_submodules():
-    """
-    Checks alfis and yggdrasil git submodules and
-    init, update them in other cases
-    """
-
-    submodules_status = subprocess.run(
-        ["git", "submodule", "status"], stdout=subprocess.PIPE, check=True,
-    )
-
-    if any(clean_submodule in submodules_status.stdout
-           for clean_submodule in [b"alfis\n", b"yggdrasil\n"]):
-
-        subprocess.run(["git", "submodule", "init"], check=True)
-        subprocess.run(["git", "submodule", "update"], check=True)
-
-    print(" * Submodules prepared")
-
-
 def start():
     """
     Initializes yggway subsystems and starts system
     """
-
-    check_submodules()
 
     xdpy_info = subprocess.run(["xdpyinfo"], stdout=subprocess.PIPE, check=True, text=True)
     resolution = re.search(r"dimensions:    ([0-9]+)x([0-9]+) pixels", xdpy_info.stdout)
