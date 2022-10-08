@@ -1,3 +1,15 @@
-# Yggdrasil Gateway(Outdated)
+# Yggway(Yggdrasil Gateway)
 
-With this repo, you could fast set up a gateway to the Yggdrasil network and Alfis DNS resolver. In `yggdrasil/configuration.py` you may preset a list of public peers. I use Ukrainian peers, but you can choose the most suitable for you from the [peers list](https://github.com/yggdrasil-network/public-peers). Also after the first start, you could modify Alfis settings in `alfis/alfis.toml`. Scripts are automatically caring about the nameserver setup. If you want to use docker-compose you will need to figure out how to set up a default nameserver by yourself. Firefox works fine with .ygg domains, Google Chrome doesn't. If you want to use Google Chrome you may resolve domains with dig or nslookup, or even ping and then open via Chrome.
+The fast and efficient way to access the Yggdrasil network and Alfis domain name system.
+
+## Configs
+
+* config/blockhain.db: backup of Alfis blockchain to decrease yggway start time
+* config/peer.json: list of yggdrasil peers. Ukrainian peers are default. Take a look at [peer's list](https://github.com/yggdrasil-network/public-peers) to find a better list for yourself
+* config/resolv.conf: default dns config for the system
+
+## Howto start
+
+```console
+host@root:~# ./yggway -h
+```

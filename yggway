@@ -30,6 +30,7 @@ def start():
         os.makedirs(f"storage/{service}", exist_ok=True)
 
     shutil.copy("config/blockchain.db", "storage/alfis")
+    shutil.copy("config/peers.json", "storage/yggdrasil")
 
     subprocess.run(["docker-compose", "up", "--detach"], check=True)
 
