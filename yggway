@@ -2,11 +2,10 @@
 """
 Utility for managing containers system
 that gives access to yggdrasil network and alfis dns
-via firefox browser in your host browser
+via firefox browser
 """
 
 import os
-import re
 import sys
 import shutil
 import argparse
@@ -18,9 +17,14 @@ def start():
     Initializes yggway subsystems and starts system
     """
 
-    xdpy_info = subprocess.run(["xdpyinfo"], stdout=subprocess.PIPE, check=True, text=True)
-    resolution = re.search(r"dimensions:    ([0-9]+)x([0-9]+) pixels", xdpy_info.stdout)
-    (os.environ["DISPLAY_WIDTH"], os.environ["DISPLAY_HEIGHT"]) = resolution.groups()
+    os.environ["PUID"] = subprocess.run(
+        ["id", "-u"], stdout=subprocess.PIPE, check=True, text=True).stdout
+
+    os.environ["PGID"] = subprocess.run(
+        ["id", "-g"], stdout=subprocess.PIPE, check=True, text=True).stdout
+
+    os.environ["TZ"] = subprocess.run(
+        ["cat", "/etc/timezone"], stdout=subprocess.PIPE, check=True, text=True).stdout
 
     subprocess.run(["docker-compose", "config"], stdout=subprocess.DEVNULL, check=True)
 
@@ -32,6 +36,7 @@ def start():
     shutil.copy("config/blockchain.db", "storage/alfis")
     shutil.copy("config/peers.json", "storage/yggdrasil")
 
+    subprocess.run(["xhost", "+"], check=True)
     subprocess.run(["docker-compose", "up", "--detach"], check=True)
 
 
@@ -81,7 +86,7 @@ def parse_args():
 
     parser.add_argument(
         '-u', '--start', action='store_true',
-        help='starts yggdrasil gateway; (you could access to browser through localhost:5800)'
+        help='starts yggdrasil gateway(Mozilla window will open instantly)'
     )
 
     parser.add_argument(

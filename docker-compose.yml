@@ -19,8 +19,6 @@ services:
       - type: bind
         source: ./config/resolv.conf
         target: /etc/resolv.conf
-    ports:
-      - "5800:5800"
 
   alfis:
     image: ghcr.io/dkushche/alfis_service:master
@@ -33,15 +31,23 @@ services:
     network_mode: service:yggdrasil
 
   firefox:
-    image: jlesage/firefox:v1.18.0
+    image: lscr.io/linuxserver/firefox:latest
     container_name: firefox_interface
-    restart: always
+    entrypoint: firefox
     shm_size: '2gb'
     environment:
-      - DISPLAY_WIDTH=${DISPLAY_WIDTH}
-      - DISPLAY_HEIGHT=${DISPLAY_HEIGHT}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - DISPLAY=${DISPLAY}
     volumes:
       - type: bind
         source: ./storage/firefox
         target: /config
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
     network_mode: service:yggdrasil
+    depends_on:
+      - alfis
+      - yggdrasil
